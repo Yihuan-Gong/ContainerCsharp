@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SelfMadeContainerExample
 {
-    internal class FeedBird
+    public class FeedBird
     {
         readonly ABird bird;
 

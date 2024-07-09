@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SelfMadeContainerExample.Birds
 {
-    internal class Sparrow : ABird
+    public class Sparrow : ABird
     {
         public override void Eat()
         {

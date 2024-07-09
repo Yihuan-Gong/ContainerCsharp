@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SelfMadeContainerExample.Birds
 {
-    internal abstract class ABird
+    public abstract class ABird
     {
         public int Age;
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SelfMadeContainerExample
 {
-    internal class Service
+    public class Service
     {
         static readonly Dictionary<string, ContainerModel> keyValuePairs;
 
@@ -44,6 +44,19 @@ namespace SelfMadeContainerExample
             };
 
             keyValuePairs.Add(parentType, containerModel);
+        }
+
+        public static void AddSingleton<T>(T obj)
+        {
+            string typeName = typeof(T).Name;
+
+            var containerModel = new ContainerModel
+            {
+                Mode = "Singleton",
+                Child = obj
+            };
+
+            keyValuePairs.Add(typeName, containerModel);
         }
 
         public static void AddSingleton<Tparent, Tchild>(Action<Tchild> assignInitValue)

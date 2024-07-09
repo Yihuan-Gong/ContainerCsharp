@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SelfMadeContainerExample
 {
-    internal class ContainerModel
+    public class ContainerModel
     {
         public string Mode;
         public string ChildType;
