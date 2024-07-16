@@ -4,123 +4,89 @@ using System.Reflection;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SelfMadeContainerExample
 {
     public class Service
     {
-        static readonly Dictionary<string, ContainerModel> keyValuePairs;
-
+        public static YiHuanServiceCollection ServiceCollection { get; private set; }
 
         static Service()
         {
-            keyValuePairs = new Dictionary<string, ContainerModel>();
+            ServiceCollection = new YiHuanServiceCollection();
         }
 
 
         public static void AddTransit<Tparent, Tchild>()
         {
-            string parentType = typeof(Tparent).Name;
-            string childType = typeof(Tchild).Name;
+            Type serviceType = typeof(Tparent);
+            Type implementationType = typeof(Tchild);
 
-            var containerModel = new ContainerModel
-            {
-                Mode = "Transit",
-                ChildType = childType
-            };
-
-            keyValuePairs.Add(parentType, containerModel);
+            ServiceCollection.Add(
+                new ServiceDescriptor(serviceType, implementationType, ServiceLifetime.Transient)
+            );
         }
 
         public static void AddSingleton<Tparent, Tchild>()
-            where Tchild : class, new()
+            where Tchild : class
         {
-            string parentType = typeof(Tparent).Name;
+            Type serviceType = typeof(Tparent);
+            Type implementationType = typeof(Tchild);
 
-            var containerModel = new ContainerModel
-            {
-                Mode = "Singleton",
-                Child = new Tchild()
-            };
-
-            keyValuePairs.Add(parentType, containerModel);
+            ServiceCollection.Add(new ServiceDescriptor(serviceType, implementationType, ServiceLifetime.Singleton));
         }
 
         public static void AddSingleton<T>(T obj)
         {
-            string typeName = typeof(T).Name;
+            if (obj == null) return;
 
-            var containerModel = new ContainerModel
-            {
-                Mode = "Singleton",
-                Child = obj
-            };
-
-            keyValuePairs.Add(typeName, containerModel);
+            Type serviceType = obj.GetType();
+            ServiceCollection.Add(new ServiceDescriptor(serviceType, obj));
         }
 
-        public static void AddSingleton<Tparent, Tchild>(Action<Tchild> assignInitValue)
+        public static void AddSingleton<Tparent, Tchild>(Func<Tchild> factory)
             where Tchild : class, new()
         {
-            string parentType = typeof(Tparent).Name;
+            Type serviceType = typeof(Tparent);
+            Type implementationType = typeof(Tchild);
 
-            Tchild childInstance = new Tchild();
-            assignInitValue.Invoke(childInstance);
-
-            var containerModel = new ContainerModel
+            Func<IServiceProvider, Tchild> implementationFactory = sp =>
             {
-                Mode = "Singleton",
-                Child = childInstance
+                return factory.Invoke();
             };
 
-            keyValuePairs.Add(parentType, containerModel);
+            ServiceCollection.Add(new ServiceDescriptor(serviceType, implementationFactory, ServiceLifetime.Singleton));
         }
 
-        public static Tparent GetInstance<Tparent>()
+
+        public static IServiceProvider BuildServiceProvider()
         {
-            string parentType = typeof(Tparent).Name;
-            ContainerModel child = keyValuePairs[parentType];
-
-            if (child.Mode == "Transit")
-            {
-                var allClasses = Assembly.GetExecutingAssembly();
-                foreach (var x in allClasses.GetTypes())
-                {
-                    if (x.Name == child.ChildType)
-                    {
-                        var instance = (Tparent)Assembly.GetExecutingAssembly()
-                            .CreateInstance(x.FullName);
-
-                        return instance;
-                    }
-                }
-            }
-
-            return (Tparent)child.Child;
+            return new YiHuanServiceProvider(ServiceCollection.TypeServiceDescriptorDict);
         }
 
-        public static Tparent GetInstance<Tparent>(Action<Tparent> assignInitValue)
-        {
-            string parentType = typeof(Tparent).Name;
-            ContainerModel child = keyValuePairs[parentType];
+        //public static Tparent GetInstance<Tparent>()
+        //{
+        //    Type serviceType = typeof(Tparent);
+        //    ServiceDescriptor serviceDescriptor = ServiceCollection.GetServiceDescriptor(serviceType) ??
+        //        throw new ArgumentNullException("item");
 
-            if (child.Mode == "Transit")
-            {
-                var allClasses = Assembly.GetExecutingAssembly();
-                foreach (var x in allClasses.GetTypes())
-                {
-                    if (x.Name == child.ChildType)
-                    {
-                        var instance = (Tparent)Assembly.GetExecutingAssembly()
-                            .CreateInstance(x.FullName);
+        //    if (serviceDescriptor.ImplementationInstance != null)
+        //    {
+        //        return (Tparent)serviceDescriptor.ImplementationInstance;
+        //    }
 
-                        assignInitValue.Invoke(instance);
-                        return instance;
-                    }
-                }
-            }
+        //    if (serviceDescriptor.ImplementationFactory != null)
+        //    {
+        //        return serviceDescriptor.ImplementationFactory.Invoke();
+        //    }
 
-            return (Tparent)child.Child;
-        }
+        //    if (serviceDescriptor.ImplementationType != null)
+        //    {
+        //        return (Tparent)Activator.CreateInstance(serviceDescriptor.ImplementationType);
+        //    }
+
+        //    return (Tparent)Activator.CreateInstance(serviceDescriptor.ServiceType);
+        //}
     }
 }
