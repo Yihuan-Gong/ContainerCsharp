@@ -32,10 +32,7 @@ namespace SelfMadeContainerExample
             }
 
             serviceDescriptorList = GetServiceDescriptorList(serviceType);
-            if (serviceDescriptorList != null)
-                return GetImplementationInstance(serviceType, serviceDescriptorList.Last());
-            else
-                return null;
+            return GetImplementationInstance(serviceType, serviceDescriptorList?.LastOrDefault());
 
 
 
@@ -76,12 +73,26 @@ namespace SelfMadeContainerExample
 
         private object GetIEnumerableImplementationInstance(Type serviceType, List<ServiceDescriptor> serviceDescriptorList)
         {
-            List<object> result = new List<object>();
+            if (serviceDescriptorList == null)
+                return null;
 
-            foreach (var serviceDescriptor in serviceDescriptorList)
+            //List<object> result = new List<object>();
+
+            IList result = CreateGenericList(serviceType);
+
+            for (int i = 0; i < serviceDescriptorList.Count; i++)
             {
-                result.Add(GetImplementationInstance(serviceType, serviceDescriptor));
+                var serviceDescriptor = serviceDescriptorList[i];
+                var implementationInstance = GetImplementationInstance(serviceType, serviceDescriptor);
+                AddElementToList(result, implementationInstance, serviceType);
+                //result.Add(GetImplementationInstance(serviceType, serviceDescriptor));
             }
+
+
+            //foreach (var serviceDescriptor in serviceDescriptorList)
+            //{
+            //    result.Add(GetImplementationInstance(serviceType, serviceDescriptor));
+            //}
 
             return result;
         }
@@ -108,7 +119,7 @@ namespace SelfMadeContainerExample
                 implementorInstance = CreateInstance(serviceType);
             }
 
-            if (serviceDescriptor.Lifetime == ServiceLifetime.Singleton)
+            if (serviceDescriptor.Lifetime == ServiceLifetime.Singleton && implementorInstance != null)
             {
                 var updatedServiceDescriptor = ServiceDescriptor.Singleton(serviceType, implementorInstance);
 
@@ -168,6 +179,28 @@ namespace SelfMadeContainerExample
             }
 
             return null;
+        }
+
+        private IList CreateGenericList(Type type)
+        {
+            // 獲取List<>類型
+            Type listType = typeof(List<>);
+
+            // 創建List<>類型，並將元素類型設置為type
+            Type constructedListType = listType.MakeGenericType(type);
+
+            // 創建List<type>的實例
+            return (IList)Activator.CreateInstance(constructedListType);
+        }
+
+        public static void AddElementToList(IList list, object element, Type type)
+        {
+            // 獲取List<>.Add方法
+            var method = list.GetType().GetMethod("Add");
+
+            // 將element轉型成type並加入list
+            //var convertedElement = Convert.ChangeType(element, type);
+            method.Invoke(list, new[] { element });
         }
 
         //private object CreateInstance(Type type)
@@ -238,7 +271,8 @@ namespace SelfMadeContainerExample
                 return Activator.CreateInstance(type);
             }
 
-            throw new InvalidOperationException($"No suitable constructor found for type {type}");
+            return null;
+            //throw new InvalidOperationException($"No suitable constructor found for type {type}");
         }
     }
 }

@@ -28,12 +28,10 @@ namespace SelfMadeContainerExample
             );
         }
 
-        public static void AddSingleton<Tparent, Tchild>()
-            where Tchild : class
+        public static void AddSingleton<T>()
         {
-            Type serviceType = typeof(Tparent);
-            Type implementationType = typeof(Tchild);
-
+            Type serviceType = typeof(T);
+            Type implementationType = typeof(T);
             ServiceCollection.Add(new ServiceDescriptor(serviceType, implementationType, ServiceLifetime.Singleton));
         }
 
@@ -43,6 +41,22 @@ namespace SelfMadeContainerExample
 
             Type serviceType = obj.GetType();
             ServiceCollection.Add(new ServiceDescriptor(serviceType, obj));
+        }
+
+        public static void AddSingleton<T>(Func<IServiceProvider, T> factory)
+        {
+            Type serviceType = typeof(T);
+            ServiceCollection.Add(new ServiceDescriptor(serviceType, factory, ServiceLifetime.Singleton));
+        }
+
+
+        public static void AddSingleton<Tparent, Tchild>()
+            where Tchild : class
+        {
+            Type serviceType = typeof(Tparent);
+            Type implementationType = typeof(Tchild);
+
+            ServiceCollection.Add(new ServiceDescriptor(serviceType, implementationType, ServiceLifetime.Singleton));
         }
 
         public static void AddSingleton<Tparent, Tchild>(Func<IServiceProvider, Tchild> factory)

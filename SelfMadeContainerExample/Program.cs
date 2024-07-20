@@ -32,18 +32,18 @@ namespace SelfMadeContainerExample
 
 
 
-            //var config = CreateConfig();
-            //Service.ServiceCollection.AddLogging(loggingBuilder =>
-            //{
-            //    loggingBuilder.ClearProviders();
-            //    loggingBuilder.SetMinimumLevel(LogLevel.Trace);
-            //    loggingBuilder.AddNLog(config);
-            //});
-            //var logger = Service.GetInstance<ILogger<Sparrow>>();
-            //Service.AddSingleton<Sparrow>(new Sparrow(logger, 10));
-            //var sparrow = Service.GetInstance<Sparrow>();
-            //sparrow.SayAge();
-            //sparrow.Eat();
+            var config = CreateConfig();
+            Service.ServiceCollection.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.SetMinimumLevel(LogLevel.Trace);
+                loggingBuilder.AddNLog(config);
+            });
+            var logger = Service.GetInstance<ILogger<Sparrow>>();
+            Service.AddSingleton<Sparrow>(new Sparrow(logger, 10));
+            var sparrow = Service.GetInstance<Sparrow>();
+            sparrow.SayAge();
+            sparrow.Eat();
 
 
             //var config = CreateConfig();
@@ -53,6 +53,7 @@ namespace SelfMadeContainerExample
             //    .AddLogging(loggingBuilder =>
             //    {
             //        loggingBuilder.ClearProviders();
+            //        loggingBuilder.SetMinimumLevel(LogLevel.Trace);
             //        loggingBuilder.AddNLog(config);
             //    })
             //    .BuildServiceProvider();
@@ -68,9 +69,10 @@ namespace SelfMadeContainerExample
             //var list = serviceProvider.GetService<ABird>();
 
 
-            Service.AddSingleton<ABird, Eagle>();
-            Service.AddSingleton<ABird, Sparrow>();
-            var list2 = Service.GetInstance<IEnumerable<ABird>>();
+            //Service.AddSingleton<ABird, Eagle>();
+            //Service.AddSingleton<ABird, Sparrow>();
+            //var list2 = Service.GetInstance<IEnumerable<ABird>>();
+            //var list3 = Service.GetInstance<IEnumerable<ABird>>();
 
 
             //var type = typeof(IEnumerable<Eagle>);
@@ -87,45 +89,6 @@ namespace SelfMadeContainerExample
 
 
             Console.ReadKey();
-        }
-
-        public static T ToSpecificType<T>(object obj)
-        {
-            if (typeof(T).IsEnumerable())
-            {
-                Type elementType = typeof(T).GetGenericArguments().First();
-                IList list = CreateGenericList(elementType);
-
-                foreach (var item in (IEnumerable)obj)
-                {
-                    AddElementToList(list, item, elementType);
-                }
-                return (T)list;
-            }
-            return (T)obj;
-        }
-
-
-        public static IList CreateGenericList(Type type)
-        {
-            // 獲取List<>類型
-            Type listType = typeof(List<>);
-
-            // 創建List<>類型，並將元素類型設置為type
-            Type constructedListType = listType.MakeGenericType(type);
-
-            // 創建List<type>的實例
-            return (IList)Activator.CreateInstance(constructedListType);
-        }
-
-        public static void AddElementToList(IList list, object element, Type type)
-        {
-            // 獲取List<>.Add方法
-            var method = list.GetType().GetMethod("Add");
-
-            // 將element轉型成type並加入list
-            //var convertedElement = Convert.ChangeType(element, type);
-            method.Invoke(list, new[] { element });
         }
 
 
