@@ -9,24 +9,24 @@ namespace SelfMadeContainerExample
 {
     public class FeedBird
     {
-        readonly ABird bird;
+        //readonly ABird bird;
 
-        public FeedBird()
-        {
-            bird = Service.GetInstance<ABird>(x => x.Age = 50);
-            bird.Age = 500;
-            bird = Service.GetInstance<ABird>(x => x.Age = 50);
+        //public FeedBird()
+        //{
+        //    bird = Service.GetInstance<ABird>(x => x.Age = 50);
+        //    bird.Age = 500;
+        //    bird = Service.GetInstance<ABird>(x => x.Age = 50);
 
-        }
+        //}
 
-        public void Feed()
-        {
-            bird.Eat();
-        }
+        //public void Feed()
+        //{
+        //    bird.Eat();
+        //}
 
-        public void SayAge()
-        {
-            bird.SayAge();
-        }
+        //public void SayAge()
+        //{
+        //    bird.SayAge();
+        //}
     }
 }

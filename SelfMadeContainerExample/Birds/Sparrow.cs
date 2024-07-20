@@ -11,9 +11,20 @@ namespace SelfMadeContainerExample.Birds
     {
         public ILogger<Sparrow> Logger { get; set; }
 
+        //public Sparrow()
+        //{
+        //    Logger = Service.GetInstance<ILogger<Sparrow>>();
+        //}
+
         public Sparrow()
         {
-            Logger = Service.GetInstance<ILogger<Sparrow>>();
+
+        }
+
+        public Sparrow(ILogger<Sparrow> logger, int age)
+        {
+            Age = age;
+            Logger = logger;
         }
 
         public override void Eat()

@@ -45,18 +45,13 @@ namespace SelfMadeContainerExample
             ServiceCollection.Add(new ServiceDescriptor(serviceType, obj));
         }
 
-        public static void AddSingleton<Tparent, Tchild>(Func<Tchild> factory)
+        public static void AddSingleton<Tparent, Tchild>(Func<IServiceProvider, Tchild> factory)
             where Tchild : class, new()
         {
             Type serviceType = typeof(Tparent);
             Type implementationType = typeof(Tchild);
 
-            Func<IServiceProvider, Tchild> implementationFactory = sp =>
-            {
-                return factory.Invoke();
-            };
-
-            ServiceCollection.Add(new ServiceDescriptor(serviceType, implementationFactory, ServiceLifetime.Singleton));
+            ServiceCollection.Add(new ServiceDescriptor(serviceType, factory, ServiceLifetime.Singleton));
         }
 
 
@@ -65,28 +60,9 @@ namespace SelfMadeContainerExample
             return new YiHuanServiceProvider(ServiceCollection.TypeServiceDescriptorDict);
         }
 
-        //public static Tparent GetInstance<Tparent>()
-        //{
-        //    Type serviceType = typeof(Tparent);
-        //    ServiceDescriptor serviceDescriptor = ServiceCollection.GetServiceDescriptor(serviceType) ??
-        //        throw new ArgumentNullException("item");
-
-        //    if (serviceDescriptor.ImplementationInstance != null)
-        //    {
-        //        return (Tparent)serviceDescriptor.ImplementationInstance;
-        //    }
-
-        //    if (serviceDescriptor.ImplementationFactory != null)
-        //    {
-        //        return serviceDescriptor.ImplementationFactory.Invoke();
-        //    }
-
-        //    if (serviceDescriptor.ImplementationType != null)
-        //    {
-        //        return (Tparent)Activator.CreateInstance(serviceDescriptor.ImplementationType);
-        //    }
-
-        //    return (Tparent)Activator.CreateInstance(serviceDescriptor.ServiceType);
-        //}
+        public static Tparent GetInstance<Tparent>()
+        {
+            return BuildServiceProvider().GetService<Tparent>();
+        }
     }
 }

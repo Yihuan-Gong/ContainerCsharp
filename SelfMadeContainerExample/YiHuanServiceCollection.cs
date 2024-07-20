@@ -11,16 +11,16 @@ namespace SelfMadeContainerExample
 {
     public class YiHuanServiceCollection : IServiceCollection
     {
-        public readonly Dictionary<Type, ServiceDescriptor> TypeServiceDescriptorDict;
+        public readonly Dictionary<Type, List<ServiceDescriptor>> TypeServiceDescriptorDict;
 
         public YiHuanServiceCollection()
         {
-            TypeServiceDescriptorDict = new Dictionary<Type, ServiceDescriptor>();
+            TypeServiceDescriptorDict = new Dictionary<Type, List<ServiceDescriptor>>();
         }
 
         public ServiceDescriptor this[int index]
         {
-            get => GetServiceDescriptorFromDict(index);
+            get => GetServiceDescriptorFromDict(index).Last();
             set => throw new NotImplementedException();
         }
 
@@ -30,15 +30,10 @@ namespace SelfMadeContainerExample
 
         public void Add(ServiceDescriptor item)
         {
-            TypeServiceDescriptorDict.Add(item.ServiceType, item);
-        }
-
-        public ServiceDescriptor GetServiceDescriptor(Type serviceType)
-        {
-            ServiceDescriptor serviceDescriptor;
-            TypeServiceDescriptorDict.TryGetValue(serviceType, out serviceDescriptor);
-
-            return serviceDescriptor;
+            if (!TypeServiceDescriptorDict.ContainsKey(item.ServiceType))
+                TypeServiceDescriptorDict.Add(item.ServiceType, new List<ServiceDescriptor> { item });
+            else
+                TypeServiceDescriptorDict[item.ServiceType].Add(item);
         }
 
         public void Clear()
@@ -87,7 +82,7 @@ namespace SelfMadeContainerExample
         }
 
 
-        private ServiceDescriptor GetServiceDescriptorFromDict(int index)
+        private List<ServiceDescriptor> GetServiceDescriptorFromDict(int index)
         {
             int i = 0;
             foreach (var item in TypeServiceDescriptorDict)
