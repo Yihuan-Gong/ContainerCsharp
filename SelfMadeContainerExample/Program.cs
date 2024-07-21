@@ -39,8 +39,7 @@ namespace SelfMadeContainerExample
                 loggingBuilder.SetMinimumLevel(LogLevel.Trace);
                 loggingBuilder.AddNLog(config);
             });
-            var logger = Service.GetInstance<ILogger<Sparrow>>();
-            Service.AddSingleton<Sparrow>(new Sparrow(logger, 10));
+            Service.AddSingleton<Sparrow>(sp => new Sparrow(sp.GetService<ILogger<Sparrow>>(), 10));
             var sparrow = Service.GetInstance<Sparrow>();
             sparrow.SayAge();
             sparrow.Eat();

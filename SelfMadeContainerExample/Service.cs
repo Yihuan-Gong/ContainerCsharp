@@ -44,6 +44,7 @@ namespace SelfMadeContainerExample
         }
 
         public static void AddSingleton<T>(Func<IServiceProvider, T> factory)
+            where T : class
         {
             Type serviceType = typeof(T);
             ServiceCollection.Add(new ServiceDescriptor(serviceType, factory, ServiceLifetime.Singleton));

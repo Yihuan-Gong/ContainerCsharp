@@ -33,41 +33,6 @@ namespace SelfMadeContainerExample
 
             serviceDescriptorList = GetServiceDescriptorList(serviceType);
             return GetImplementationInstance(serviceType, serviceDescriptorList?.LastOrDefault());
-
-
-
-            //ServiceDescriptor serviceDescriptor = serviceDescriptorList.Last();
-
-            //if (serviceDescriptor == null && serviceType.IsGenericType)
-            //    serviceDescriptor = GetServiceDescriptorFromGeneric(serviceType);
-
-            //if (serviceDescriptor == null)
-            //    return null;
-
-            //if (serviceDescriptor.ImplementationInstance != null)
-            //    return serviceDescriptor.ImplementationInstance;
-
-            //object implementorInstance;
-            //if (serviceDescriptor.ImplementationFactory != null)
-            //{
-            //    implementorInstance = serviceDescriptor.ImplementationFactory.Invoke(this);
-            //}
-            //else if (serviceDescriptor.ImplementationType != null)
-            //{
-            //    implementorInstance = CreateInstance(serviceDescriptor.ImplementationType);
-            //}
-            //else
-            //{
-            //    implementorInstance = CreateInstance(serviceType);
-            //}
-
-            //if (serviceDescriptor.Lifetime == ServiceLifetime.Singleton)
-            //{
-            //    _typeServiceDescriptorDict[serviceType] =
-            //        ServiceDescriptor.Singleton(serviceType, implementorInstance);
-            //}
-
-            //return implementorInstance;
         }
 
 
@@ -85,14 +50,7 @@ namespace SelfMadeContainerExample
                 var serviceDescriptor = serviceDescriptorList[i];
                 var implementationInstance = GetImplementationInstance(serviceType, serviceDescriptor);
                 AddElementToList(result, implementationInstance, serviceType);
-                //result.Add(GetImplementationInstance(serviceType, serviceDescriptor));
             }
-
-
-            //foreach (var serviceDescriptor in serviceDescriptorList)
-            //{
-            //    result.Add(GetImplementationInstance(serviceType, serviceDescriptor));
-            //}
 
             return result;
         }
@@ -128,17 +86,11 @@ namespace SelfMadeContainerExample
                     int index = _typeServiceDescriptorDict[serviceType]
                         .FindIndex(sp => sp.ImplementationType == serviceDescriptor.ImplementationType);
 
-
-                    //var serviceDescriptorForSpecificImplemtationInstance = _typeServiceDescriptorDict[serviceType]
-                    //    .FirstOrDefault(sp => sp.ImplementationType == serviceDescriptor.ImplementationType);
-                    //.Where(sp => sp.ImplementationType == serviceDescriptor.ImplementationType)?.FirstOrDefault();
-
                     if (index != -1)
                         _typeServiceDescriptorDict[serviceType][index] = updatedServiceDescriptor;
                     else
                         _typeServiceDescriptorDict[serviceType].Add(updatedServiceDescriptor);
                 }
-                //_typeServiceDescriptorDict[serviceType].Add(updatedServiceDescriptor);
                 else
                     _typeServiceDescriptorDict.Add(serviceType, new List<ServiceDescriptor> { updatedServiceDescriptor });
             }
@@ -199,33 +151,8 @@ namespace SelfMadeContainerExample
             var method = list.GetType().GetMethod("Add");
 
             // 將element轉型成type並加入list
-            //var convertedElement = Convert.ChangeType(element, type);
             method.Invoke(list, new[] { element });
         }
-
-        //private object CreateInstance(Type type)
-        //{
-        //    ConstructorInfo[] ctors = type.GetConstructors();
-
-        //    // 檢查是否有無參數建構函式
-        //    var noPararmCtor = ctors.FirstOrDefault(c => c.GetParameters().Length == 0);
-
-        //    if (noPararmCtor != null)
-        //    {
-        //        return Activator.CreateInstance(type);
-        //    }
-        //    else
-        //    {
-        //        // 嘗試使用服務提供者解析建構函式參數
-        //        var ctorParams = ctors
-        //            .First()
-        //            .GetParameters()
-        //            .Select(param => GetService(param.ParameterType))
-        //            .ToArray();
-
-        //        return Activator.CreateInstance(type, ctorParams);
-        //    }
-        //}
 
         private object CreateInstance(Type type)
         {
