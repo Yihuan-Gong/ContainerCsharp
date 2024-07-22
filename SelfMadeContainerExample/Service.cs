@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace SelfMadeContainerExample
 {
@@ -67,6 +68,11 @@ namespace SelfMadeContainerExample
             Type implementationType = typeof(Tchild);
 
             ServiceCollection.Add(new ServiceDescriptor(serviceType, factory, ServiceLifetime.Singleton));
+        }
+
+        public static void AddLogging(Action<ILoggingBuilder> configure)
+        {
+            ServiceCollection.AddLogging(configure);
         }
 
 

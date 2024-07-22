@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SelfMadeContainerExample
 {
-    internal static class IServiceProviderExtension
+    public static class IServiceProviderExtension
     {
         public static Tparent GetService<Tparent>(this IServiceProvider serviceProvider)
         {

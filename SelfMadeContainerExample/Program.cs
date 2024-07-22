@@ -33,7 +33,7 @@ namespace SelfMadeContainerExample
 
 
             var config = CreateConfig();
-            Service.ServiceCollection.AddLogging(loggingBuilder =>
+            Service.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
                 loggingBuilder.SetMinimumLevel(LogLevel.Trace);

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SelfMadeContainerExample
 {
-    internal class YiHuanServiceProvider : IServiceProvider
+    public class YiHuanServiceProvider : IServiceProvider
     {
         private readonly Dictionary<Type, List<ServiceDescriptor>> _typeServiceDescriptorDict;
 
