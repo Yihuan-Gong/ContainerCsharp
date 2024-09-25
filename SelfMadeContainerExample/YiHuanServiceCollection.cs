@@ -53,7 +53,7 @@ namespace SelfMadeContainerExample
 
         public IEnumerator<ServiceDescriptor> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new ServiceDescriptorEnumerator(this);
         }
 
         public int IndexOf(ServiceDescriptor item)
@@ -78,7 +78,7 @@ namespace SelfMadeContainerExample
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return GetEnumerator();
         }
 
 

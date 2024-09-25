@@ -18,15 +18,27 @@ namespace SelfMadeContainerExample
             ServiceCollection = new YiHuanServiceCollection();
         }
 
+        public static void Clear()
+        {
+            ServiceCollection.TypeServiceDescriptorDict.Clear();
+            ServiceCollection = null;
+            GC.Collect();
+        }
+
 
         public static void AddTransit<Tparent, Tchild>()
         {
             Type serviceType = typeof(Tparent);
             Type implementationType = typeof(Tchild);
 
+            AddTransit(serviceType, implementationType);
+        }
+
+        public static void AddTransit(Type serviceType, Type implementationType)
+        {
             ServiceCollection.Add(
-                new ServiceDescriptor(serviceType, implementationType, ServiceLifetime.Transient)
-            );
+               new ServiceDescriptor(serviceType, implementationType, ServiceLifetime.Transient)
+           );
         }
 
         public static void AddSingleton<T>()
@@ -58,6 +70,11 @@ namespace SelfMadeContainerExample
             Type serviceType = typeof(Tparent);
             Type implementationType = typeof(Tchild);
 
+            AddSingleton(serviceType, implementationType);
+        }
+
+        public static void AddSingleton(Type serviceType, Type implementationType)
+        {
             ServiceCollection.Add(new ServiceDescriptor(serviceType, implementationType, ServiceLifetime.Singleton));
         }
 

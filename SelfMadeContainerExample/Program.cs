@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+//using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using NLog.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -30,7 +30,7 @@ namespace SelfMadeContainerExample
 
             //Service.ExtensionCollection.Add(ServiceDescriptor.Singleton(new Sparrow { Age = 10 }));
 
-
+            Dictionary<string, int> dicts = new Dictionary<string, int>();
 
             var config = CreateConfig();
             Service.AddLogging(loggingBuilder =>
